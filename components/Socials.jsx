@@ -9,7 +9,7 @@ const socials = [
   },
   {
     icon: <FaLinkedinIn />,
-    path: "https://www.linkedin.com/in/ahmaidi",
+    path: "https://www.linkedin.com/in/ahmedhmaidi/",
   },
 ];
 
