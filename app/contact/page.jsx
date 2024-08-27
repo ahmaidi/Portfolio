@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,9 +31,47 @@ const info =[
     description:"HAY ALINBIAAT BOUJDOUR",
   }
 ];
-
+import emailjs from "emailjs-com";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    service: "",
+    message: "",
+    to_name: "ahmed",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSelectChange = (value) => {
+    setFormData({ ...formData, service: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    emailjs
+      .send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+        formData,
+        process.env.NEXT_PUBLIC_EMAILJS_USER_ID
+      )
+      .then(
+        (result) => {
+          console.log("Email sent successfully!", result.text);
+        },
+        (error) => {
+          console.error("Failed to send email.", error.text);
+        }
+      );
+  };
+
   return(
     <motion.div initial={{ opacity: 0 }}
     animate={{
@@ -42,15 +81,15 @@ const Contact = () => {
         <div className="container mx-auto">
         <div className="flex flex-col xl:flex-row gap-[30px]">
         <div className="xl:w-[54%] order-2 xl:order-none ">
-          <form className="flex flex-col gap-6 p-10 bg-[#27272C] rounded-xl">
+          <form  onSubmit={handleSubmit} className="flex flex-col gap-6 p-10 bg-[#27272C] rounded-xl">
             <h3 className="text-4xl text-accent">Let's work together</h3>
             <div className="grid grid-cols-1 md:grd-cols-2 gap-6">
-              <Input type="firstname" placeholder="Firstname"/>
-              <Input type="lastname" placeholder="Lastname"/>
-              <Input type="email" placeholder="Email"/>
-              <Input type="phone" placeholder="Phone number"/>
+              <Input type="firstname" placeholder="Firstname" name="firstname" onChange={handleChange}/>
+              <Input type="lastname" placeholder="Lastname" name="lastname" onChange={handleChange}/>
+              <Input type="email" placeholder="Email" name="email" onChange={handleChange}/>
+              <Input type="phone" placeholder="Phone number" name="phone" onChange={handleChange}/>
             </div>
-            <Select>
+            <Select onValueChange={handleSelectChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a service"/>
               </SelectTrigger>
@@ -63,8 +102,8 @@ const Contact = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Textarea className="h-[200px]"  placeholder="Tap your message here"/>
-            <Button size="md" className="max-w-40">Send message</Button>
+            <Textarea className="h-[200px]"  placeholder="Tap your message here" name="message" onChange={handleChange}/>
+            <Button type="submit" size="md" className="max-w-40">Send message</Button>
           </form>
         </div>
         <div className="flex flex-1 items-center xl:justify-end order-1 xl:order-none mb-8 xl:mb-0">
